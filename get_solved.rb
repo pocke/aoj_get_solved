@@ -16,7 +16,6 @@ def get_problem_ids(user_id)
     result.concat buf
     break unless buf.size == 100
     i += 100
-    p i
   end
   result
 end
@@ -28,10 +27,20 @@ end
 
 def make_problem_tree(user_id, dir)
   probs = get_problem_ids(user_id)
+  thread_list = []
   probs.each do |prob|
-    prob[:source] = get_source(prob[:run_id])
-    puts "get source #{prob[:run_id]}"
+    thread_list << Thread.new do
+      begin
+        prob[:source] = get_source(prob[:run_id])
+        puts "get source #{prob[:run_id]}"
+      rescue SocketError
+        puts 'error'
+        sleep 1
+        retry
+      end
+    end
   end
+  thread_list.each{|t|t.join}
 
   Dir.chdir(dir) do
     probs.each do |prob|
