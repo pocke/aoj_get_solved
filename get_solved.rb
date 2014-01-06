@@ -57,12 +57,12 @@ def make_problem_tree(user_id, dir)
         when 'JavaScript';   'js'
         end
       status = case prob[:status]
-        when 'Accepted';                              'AC'
+        when 'Accepted';                               'AC'
         when 'Wrong Answer', 'WA: Presentation Error'; 'WA'
-        when 'Time Limit Exceeded';                   'TL'
-        when 'Memory Limit Exceeded';                 'ML'
-        when 'Runtime Error';                         'RE'
-        when 'Compile Error';                         'CE'
+        when 'Time Limit Exceeded';                    'TL'
+        when 'Memory Limit Exceeded';                  'ML'
+        when 'Runtime Error';                          'RE'
+        when 'Compile Error';                          'CE'
         end
       File::open(File::join(prob[:problem_id], "#{prob[:run_id]}#{status}.#{suffix}"), 'w') do |f|
         f.write(prob[:source])
