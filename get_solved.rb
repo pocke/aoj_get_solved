@@ -1,3 +1,7 @@
+# Copyright 2014, pocke
+# Licensed MIT
+# http://opensource.org/licenses/mit-license.php
+
 require 'open-uri'
 require 'nokogiri'
 require 'optparse'
