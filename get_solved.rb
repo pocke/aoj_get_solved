@@ -30,21 +30,34 @@ def get_source(id)
 end
 
 def make_problem_tree(user_id, dir)
+  thread_max = 5
   probs = get_problem_ids(user_id)
-  thread_list = []
+  jobqueue = Queue.new
   probs.each do |prob|
-    thread_list << Thread.new do
-      begin
-        prob[:source] = get_source(prob[:run_id])
-        puts "get source #{prob[:run_id]}"
-      rescue SocketError
-        puts 'error'
-        sleep 1
-        retry
+    jobqueue.push(prob)
+  end
+
+  threads = []
+  thread_max.times do
+    threads << Thread.new do
+      loop do
+        begin
+          prob = jobqueue.pop(true)
+        rescue ThreadError
+          break
+        end
+        begin
+          prob[:source] = get_source(prob[:run_id])
+          puts "get source #{prob[:run_id]}"
+        rescue SocketError
+          puts 'error'
+          sleep 1
+          retry
+        end
       end
     end
   end
-  thread_list.each{|t|t.join}
+  threads.each{|t|t.join}
 
   Dir.chdir(dir) do
     probs.each do |prob|
