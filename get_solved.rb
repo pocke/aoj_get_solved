@@ -10,14 +10,15 @@ require_relative 'xml_hash'
 def get_problem_ids(user_id)
   result = []
   i = 0
+  uri_base = "http://judge.u-aizu.ac.jp/onlinejudge/webservice/status_log?user_id=#{user_id}&limit=100&start="
   loop do
-    buf = REXML::Document.new(open("http://judge.u-aizu.ac.jp/onlinejudge/webservice/status_log?user_id=#{user_id}&limit=100&start=#{i}")).to_hash[:status_list][:status]
+    buf = REXML::Document.new(open("#{uri_base}#{i}")).to_hash[:status_list][:status]
     buf.each do |b|
       b.each do |key, val|
         val.gsub!("\n", '')
       end
     end
-    result.concat buf
+    result.concat(buf)
     break unless buf.size == 100
     i += 100
   end
